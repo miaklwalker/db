@@ -62,6 +62,20 @@ import type {
 import type { IndexOptions } from "./indexes/index-options.js"
 import type { BaseIndex, IndexResolver } from "./indexes/base-index.js"
 
+declare global {
+  interface Window {
+    __TANSTACK_DB_DEVTOOLS__?: {
+      registerCollection: (
+        collection: CollectionImpl<any, any, any> & { store: unknown }
+      ) => (() => void) | void
+      unregisterCollection: (collectionId: string) => void
+      store?: {
+        registerTransaction?: (transaction: any, collectionId: string) => void
+      }
+    }
+  }
+}
+
 // Check for devtools registry and register collection if available
 function registerWithDevtools(collection: CollectionImpl<any, any, any>): void {
   // Skip registration if this is a devtools internal collection

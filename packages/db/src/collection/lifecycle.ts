@@ -7,6 +7,8 @@ import {
   safeCancelIdleCallback,
   safeRequestIdleCallback,
 } from '../utils/browser-polyfills'
+import { triggerDevtoolsUpdate } from './dev-tool-utils'
+import type { CollectionImpl } from './index'
 import type { IdleCallbackDeadline } from '../utils/browser-polyfills'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { CollectionConfig, CollectionStatus } from '../types'
@@ -29,6 +31,7 @@ export class CollectionLifecycleManager<
   private changes!: CollectionChangesManager<TOutput, TKey, TSchema, TInput>
   private sync!: CollectionSyncManager<TOutput, TKey, TSchema, TInput>
   private state!: CollectionStateManager<TOutput, TKey, TSchema, TInput>
+  private collection!: CollectionImpl<TOutput, TKey, any, TSchema, TInput>
 
   public status: CollectionStatus = `idle`
   public hasBeenReady = false
@@ -51,12 +54,14 @@ export class CollectionLifecycleManager<
     changes: CollectionChangesManager<TOutput, TKey, TSchema, TInput>
     sync: CollectionSyncManager<TOutput, TKey, TSchema, TInput>
     state: CollectionStateManager<TOutput, TKey, TSchema, TInput>
+    collection: CollectionImpl<TOutput, TKey, any, TSchema, TInput>
   }) {
     this.indexes = deps.indexes
     this.events = deps.events
     this.changes = deps.changes
     this.sync = deps.sync
     this.state = deps.state
+    this.collection = deps.collection
   }
 
   /**
@@ -105,6 +110,8 @@ export class CollectionLifecycleManager<
     this.validateStatusTransition(this.status, newStatus)
     const previousStatus = this.status
     this.status = newStatus
+
+    triggerDevtoolsUpdate(this.collection)
 
     // Resolve indexes when collection becomes ready
     if (newStatus === `ready` && !this.indexes.isIndexesResolved) {

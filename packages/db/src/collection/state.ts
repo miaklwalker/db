@@ -1,5 +1,7 @@
 import { deepEquals } from '../utils'
 import { SortedMap } from '../SortedMap'
+import { triggerDevtoolsUpdate } from './dev-tool-utils'
+import type {CollectionImpl} from './index.js';
 import type { Transaction } from '../transactions'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type {
@@ -7,7 +9,6 @@ import type {
   CollectionConfig,
   OptimisticChangeMessage,
 } from '../types'
-import type { CollectionImpl } from './index.js'
 import type { CollectionLifecycleManager } from './lifecycle'
 import type { CollectionChangesManager } from './changes'
 import type { CollectionIndexesManager } from './indexes'
@@ -347,6 +348,8 @@ export class CollectionStateManager<
       // Emit all events if no pending sync transactions
       this.changes.emitEvents(filteredEventsBySyncStatus, triggeredByUserAction)
     }
+    
+    triggerDevtoolsUpdate(this.collection)
   }
 
   /**
@@ -825,6 +828,8 @@ export class CollectionStateManager<
       if (!this.hasReceivedFirstCommit) {
         this.hasReceivedFirstCommit = true
       }
+
+      triggerDevtoolsUpdate(this.collection)
     }
   }
 
@@ -897,6 +902,8 @@ export class CollectionStateManager<
     this.capturePreSyncVisibleState()
 
     this.recomputeOptimisticState(false)
+
+    triggerDevtoolsUpdate(this.collection)
   }
 
   /**

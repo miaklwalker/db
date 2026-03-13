@@ -29,6 +29,10 @@ stats-hydration.json
 stats.json
 stats.html
 .vscode/settings.json
+# Nuxt.js build / generate output
+.nuxt
+dist
+build
 
 *.log
 .cache

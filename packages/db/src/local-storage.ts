@@ -618,6 +618,7 @@ export function localStorageCollectionOptions(
       getStorageSize,
       acceptMutations,
     },
+    collectionType: `local-storage` as const,
   }
 }
 

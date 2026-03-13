@@ -4,6 +4,7 @@ import {
   toExpression,
 } from '../query/builder/ref-proxy.js'
 import { CollectionSubscription } from './subscription.js'
+import { registerWithDevtools } from './dev-tool-utils'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
 import type { ChangeMessage, SubscribeChangesOptions } from '../types'
 import type { CollectionLifecycleManager } from './lifecycle.js'
@@ -160,6 +161,8 @@ export class CollectionChangesManager<
     const previousSubscriberCount = this.activeSubscribersCount
     this.activeSubscribersCount++
     this.lifecycle.cancelGCTimer()
+
+    registerWithDevtools(this.collection)
 
     // Start sync if collection was cleaned up
     if (

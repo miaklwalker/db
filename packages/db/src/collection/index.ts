@@ -3,7 +3,6 @@ import {
   CollectionRequiresSyncConfigError,
 } from '../errors'
 import { currentStateAsChanges } from './change-events'
-
 import { CollectionStateManager } from './state'
 import { CollectionChangesManager } from './changes'
 import { CollectionLifecycleManager } from './lifecycle.js'
@@ -11,6 +10,7 @@ import { CollectionSyncManager } from './sync'
 import { CollectionIndexesManager } from './indexes'
 import { CollectionMutationsManager } from './mutations'
 import { CollectionEventsManager } from './events.js'
+import { registerWithDevtools } from './dev-tool-utils'
 import type { CollectionSubscription } from './subscription'
 import type { AllCollectionEvents, CollectionEventHandler } from './events.js'
 import type { BaseIndex, IndexResolver } from '../indexes/base-index.js'
@@ -295,6 +295,7 @@ export class CollectionImpl<
   public _state: CollectionStateManager<TOutput, TKey, TSchema, TInput>
 
   private comparisonOpts: StringCollationConfig
+  public isRegisteredWithDevtools = false
 
   /**
    * Creates a new Collection instance
@@ -354,6 +355,7 @@ export class CollectionImpl<
       indexes: this._indexes,
       state: this._state,
       sync: this._sync,
+      collection: this, // Required for devtools triggerUpdate hook.
     })
     this._mutations.setDeps({
       collection: this, // Required for passing to config.onInsert/onUpdate/onDelete and annotating mutations
@@ -378,6 +380,8 @@ export class CollectionImpl<
     if (config.startSync === true) {
       this._sync.startSync()
     }
+
+    registerWithDevtools(this)
   }
 
   /**

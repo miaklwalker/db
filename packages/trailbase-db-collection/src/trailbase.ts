@@ -294,6 +294,7 @@ export function trailBaseCollectionOptions<
 
   return {
     ...config,
+    collectionType: `trailbase` as const,
     sync,
     getKey,
     onInsert: async (

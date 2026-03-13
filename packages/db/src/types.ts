@@ -567,6 +567,24 @@ export interface BaseCollectionConfig<
    */
   syncMode?: SyncMode
   /**
+   * Collection type for devtools grouping and identification
+   * @internal
+   */
+  collectionType?: string
+  /**
+   * Internal flag to prevent devtools registration for devtools-owned collections
+   * @internal
+   */
+  __devtoolsInternal?: boolean
+  /**
+   * Internal query IR storage for devtools access
+   * @internal
+   */
+  __devtoolsQueryIR?: {
+    unoptimized: any
+    optimized: any
+  }
+  /**
    * Optional asynchronous handler function called before an insert operation
    * @param params Object containing transaction and collection information
    * @returns Promise resolving to any value
@@ -714,6 +732,7 @@ export interface CollectionConfig<
   TUtils extends UtilsRecord = UtilsRecord,
 > extends BaseCollectionConfig<T, TKey, TSchema, TUtils> {
   sync: SyncConfig<T, TKey>
+  __devtoolsInternal?: boolean
 }
 
 export type SingleResult = {

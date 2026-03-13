@@ -1,15 +1,19 @@
-import { createCollection } from '@tanstack/react-db'
-import { electricCollectionOptions } from '@tanstack/electric-db-collection'
-import { queryCollectionOptions } from '@tanstack/query-db-collection'
-import { trailBaseCollectionOptions } from '@tanstack/trailbase-db-collection'
-import { QueryClient } from '@tanstack/query-core'
-import { initClient } from 'trailbase'
-import { selectConfigSchema, selectTodoSchema } from '../db/validation'
-import { api } from './api'
-import type { SelectConfig, SelectTodo } from '../db/validation'
+import { createCollection } from "@tanstack/react-db"
+import { initializeDbDevtools } from "@tanstack/react-db-devtools"
+import { electricCollectionOptions } from "@tanstack/electric-db-collection"
+import { queryCollectionOptions } from "@tanstack/query-db-collection"
+import { trailBaseCollectionOptions } from "@tanstack/trailbase-db-collection"
+import { QueryClient } from "@tanstack/query-core"
+import { initClient } from "trailbase"
+import { selectConfigSchema, selectTodoSchema } from "../db/validation"
+import { api } from "./api"
+import type { SelectConfig, SelectTodo } from "../db/validation"
 
 // Create a query client for query collections
 const queryClient = new QueryClient()
+
+// Initialize DB devtools early (idempotent - safe to call multiple times)
+initializeDbDevtools()
 
 // Create a TrailBase client.
 const trailBaseClient = initClient(`http://localhost:4000`)
@@ -17,7 +21,7 @@ const trailBaseClient = initClient(`http://localhost:4000`)
 // Electric Todo Collection
 export const electricTodoCollection = createCollection(
   electricCollectionOptions({
-    id: `todos`,
+    id: `electric-todos`,
     shapeOptions: {
       url: `http://localhost:3003/v1/shape`,
       params: {
@@ -48,7 +52,7 @@ export const electricTodoCollection = createCollection(
           }
           const response = await api.todos.update(original.id, changes)
           return response.txid
-        }),
+        })
       )
       return { txid: txids }
     },
@@ -61,17 +65,17 @@ export const electricTodoCollection = createCollection(
           }
           const response = await api.todos.delete(original.id)
           return response.txid
-        }),
+        })
       )
       return { txid: txids }
     },
-  }),
+  })
 )
 
 // Query Todo Collection
 export const queryTodoCollection = createCollection(
   queryCollectionOptions({
-    id: `todos`,
+    id: `query-todos`,
     queryKey: [`todos`],
     refetchInterval: 3000,
     queryFn: async () => {
@@ -102,7 +106,7 @@ export const queryTodoCollection = createCollection(
             throw new Error(`Original todo not found for update`)
           }
           return await api.todos.update(original.id, changes)
-        }),
+        })
       )
     },
     onDelete: async ({ transaction }) => {
@@ -113,10 +117,10 @@ export const queryTodoCollection = createCollection(
             throw new Error(`Original todo not found for delete`)
           }
           await api.todos.delete(original.id)
-        }),
+        })
       )
     },
-  }),
+  })
 )
 
 type Todo = {
@@ -130,8 +134,9 @@ type Todo = {
 // TrailBase Todo Collection
 export const trailBaseTodoCollection = createCollection(
   trailBaseCollectionOptions<SelectTodo, Todo>({
-    id: `todos`,
+    id: `trailbase-todos`,
     getKey: (item) => item.id,
+    schema: selectTodoSchema,
     recordApi: trailBaseClient.records(`todos`),
     // Re-using the example's drizzle-schema requires remapping the items.
     parse: {
@@ -142,13 +147,13 @@ export const trailBaseTodoCollection = createCollection(
       created_at: (date) => Math.floor(date.valueOf() / 1000),
       updated_at: (date) => Math.floor(date.valueOf() / 1000),
     },
-  }),
+  })
 )
 
 // Electric Config Collection
 export const electricConfigCollection = createCollection(
   electricCollectionOptions({
-    id: `config`,
+    id: `electric-config`,
     shapeOptions: {
       url: `http://localhost:3003/v1/shape`,
       params: {
@@ -174,17 +179,17 @@ export const electricConfigCollection = createCollection(
           }
           const response = await api.config.update(original.id, changes)
           return response.txid
-        }),
+        })
       )
       return { txid: txids }
     },
-  }),
+  })
 )
 
 // Query Config Collection
 export const queryConfigCollection = createCollection(
   queryCollectionOptions({
-    id: `config`,
+    id: `query-config`,
     queryKey: [`config`],
     refetchInterval: 3000,
     queryFn: async () => {
@@ -212,11 +217,11 @@ export const queryConfigCollection = createCollection(
           }
           const response = await api.config.update(original.id, changes)
           return response.txid
-        }),
+        })
       )
       return { txid: txids }
     },
-  }),
+  })
 )
 
 type Config = {
@@ -230,8 +235,9 @@ type Config = {
 // TrailBase Config Collection
 export const trailBaseConfigCollection = createCollection(
   trailBaseCollectionOptions<SelectConfig, Config>({
-    id: `config`,
+    id: `trailbase-config`,
     getKey: (item) => item.id,
+    schema: selectConfigSchema,
     recordApi: trailBaseClient.records(`config`),
     // Re-using the example's drizzle-schema requires remapping the items.
     parse: {
@@ -242,5 +248,5 @@ export const trailBaseConfigCollection = createCollection(
       created_at: (date) => Math.floor(date.valueOf() / 1000),
       updated_at: (date) => Math.floor(date.valueOf() / 1000),
     },
-  }),
+  })
 )

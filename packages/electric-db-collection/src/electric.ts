@@ -888,6 +888,7 @@ export function electricCollectionOptions<T extends Row<unknown>>(
       awaitTxId,
       awaitMatch,
     },
+    collectionType: `electric` as const,
   }
 }
 

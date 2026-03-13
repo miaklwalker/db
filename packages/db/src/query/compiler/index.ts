@@ -46,6 +46,8 @@ export interface CompilationResult {
 
   /** Map of source aliases to their WHERE clauses for index optimization */
   sourceWhereClauses: Map<string, BasicExpression<boolean>>
+  /** The optimized query IR (for devtools) */
+  optimizedQueryIR: QueryIR
 
   /**
    * Maps each source alias to its collection ID. Enables per-alias subscriptions for self-joins.
@@ -352,6 +354,7 @@ export function compileQuery(
       sourceWhereClauses,
       aliasToCollectionId,
       aliasRemapping,
+      optimizedQueryIR: query,
     }
     cache.set(rawQuery, compilationResult)
 
@@ -382,6 +385,7 @@ export function compileQuery(
     sourceWhereClauses,
     aliasToCollectionId,
     aliasRemapping,
+    optimizedQueryIR: query,
   }
   cache.set(rawQuery, compilationResult)
 

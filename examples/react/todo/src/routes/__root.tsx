@@ -1,12 +1,15 @@
-import * as React from 'react'
 import {
   HeadContent,
   Outlet,
   Scripts,
   createRootRoute,
-} from '@tanstack/react-router'
+} from "@tanstack/react-router"
+import { TanstackDevtools } from "@tanstack/react-devtools"
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools"
+import { TanStackReactDbDevtoolsPanel } from "@tanstack/react-db-devtools"
+// import { TanStackReactDbDevtools } from "@tanstack/react-db-devtools"
 
-import appCss from '../styles.css?url'
+import appCss from "../styles.css?url"
 
 export const Route = createRootRoute({
   head: () => ({
@@ -29,11 +32,25 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  shellComponent: RootDocument,
+
   component: () => (
-    <>
+    <RootDocument>
       <Outlet />
-    </>
+      <TanstackDevtools
+        plugins={[
+          {
+            name: "Tanstack Router",
+            render: <TanStackRouterDevtoolsPanel />,
+          },
+          {
+            name: "Tanstack DB",
+            render: <TanStackReactDbDevtoolsPanel />,
+          },
+        ]}
+      />
+      {/* Alternative standalone component */}
+      {/* <TanStackReactDbDevtools position="bottom-right" /> */}
+    </RootDocument>
   ),
 })
 

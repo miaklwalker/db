@@ -364,11 +364,13 @@ export function CollectionDetailsPanel({
                     Array.isArray(transactionsForCollectionQuery.data) &&
                     (transactionsForCollectionQuery.data as Array<any>).length >
                       0 && (
-                      <span class={styles().tabBadge}>
+                      <span>
+                        {` (`}
                         {
                           (transactionsForCollectionQuery.data as Array<any>)
                             .length
                         }
+                        {`)`}
                       </span>
                     )}
                 </button>

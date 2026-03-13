@@ -548,22 +548,6 @@ const stylesFactory = (shadowDOMTarget?: ShadowRoot) => {
         border-color: ${colors.blue[500]} !important;
       }
     `,
-    tabBadge: css`
-      position: absolute;
-      top: -${size[0.5]};
-      right: -${size[0.5]};
-      background: ${colors.red[500]};
-      color: ${colors.white};
-      border-radius: 50%;
-      width: ${size[3]};
-      height: ${size[3]};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: ${fontSize.xs};
-      font-weight: ${font.weight.bold};
-      line-height: 1;
-    `,
     splitPanelContainer: css`
       display: flex;
       width: 100%;

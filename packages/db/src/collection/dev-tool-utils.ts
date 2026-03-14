@@ -28,7 +28,7 @@ export function registerWithDevtools(
   collection: CollectionImpl<any, any, any>,
 ): void {
   // Skip registration if this is a devtools internal collection
-  if (collection.config.__devtoolsInternal) {
+  if (collection.config.__devtoolsInternal || (collection as any).__devtoolsInternal) {
     return
   }
 

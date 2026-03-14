@@ -107,4 +107,5 @@ export interface LiveQueryCollectionConfig<
    * If provided, these will be used instead of inheriting from the FROM collection.
    */
   defaultStringCollation?: StringCollationConfig
+  __devtoolsInternal?: boolean
 }

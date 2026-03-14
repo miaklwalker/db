@@ -76,7 +76,14 @@ export function unregisterCollection(id: string): void {
     console.warn(`Attempted to unregister collection with id ${id} from devtools, but devtools registry is not available.`)
     return;
   }
-  devtools?.unregisterCollection(id)
+  const unregister = devtools.unregisterCollection
+  if(!unregister){
+    console.warn(
+      `Attempted to unregister collection with id ${id} from devtools, but unregisterCollection method is not available on the registry.`,
+    )
+    return;
+  }
+  unregister(id)
 }
 
 /**
@@ -125,9 +132,16 @@ export function triggerTransactionUpdate(
     console.warn(`Attempted to trigger transaction update for collection with id ${collection.id}, but devtools registry is not available.`)
     return;
   }
+  const updateTransactions = devtools.store.updateTransactions
+  if (!updateTransactions) {
+    console.warn(
+      `Attempted to trigger transaction update for collection with id ${collection.id}, but updateTransactions method is not available on the registry's store.`,
+    )
+    return;
+  }
   
   // Delegate to store/registry through the public API
-  devtools.store.updateTransactions(collection.id)
+  updateTransactions(collection.id)
 }
 
 /**
@@ -139,7 +153,12 @@ export function cleanupDevtools(): void {
 
   const devtools = getDevtools()
   if (devtools) {
-    devtools.store.cleanup()
+    const cleanup = (devtools as any).cleanup
+    if(!cleanup){
+      console.warn(`Attempted to clean up devtools, but cleanup method is not available on the registry.`)
+      return;
+    }
+    cleanup()
     delete window.__TANSTACK_DB_DEVTOOLS__
   }
 }

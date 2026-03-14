@@ -275,6 +275,7 @@ export function localOnlyCollectionOptions<
     },
     startSync: true,
     gcTime: 0,
+    collectionType: `local-only` as const,
   } as LocalOnlyCollectionOptionsResult<T, TKey, TSchema> & {
     schema?: StandardSchemaV1
   }

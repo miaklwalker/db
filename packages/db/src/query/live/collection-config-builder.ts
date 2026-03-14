@@ -235,6 +235,8 @@ export class CollectionConfigBuilder<
           hasDistinct: !!this.query.distinct,
         },
       },
+      collectionType: `live-query` as const,
+      __devtoolsInternal: this.config.__devtoolsInternal,
     }
   }
 

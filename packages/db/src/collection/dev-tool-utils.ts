@@ -4,15 +4,23 @@ import type { OptimisticChangeMessage } from '../types'
 
 declare global {
   interface Window {
+    // Minimal subset needed by the core db package
     __TANSTACK_DB_DEVTOOLS__?: {
-      registerCollection: (
-        collection: CollectionImpl<any, any, any> & { store: unknown },
-      ) => (() => void) | void
-      unregisterCollection: (collectionId: string) => void
+      registerCollection?: (collection: any) => (() => void) | undefined
+      unregisterCollection?: (id: string) => void
+      registerTransaction?: (transaction: any, collectionId: string) => void
+      updateTransactions?: (collectionId?: string) => void
       store?: {
         registerTransaction?: (transaction: any, collectionId: string) => void
+        updateTransactions?: (collectionId?: string) => void
       }
     }
+
+    // Queue used before devtools initialize (read/written by core)
+    __TANSTACK_DB_PENDING_TRANSACTIONS__?: Array<{
+      transaction: any
+      collectionId: string
+    }>
   }
 }
 

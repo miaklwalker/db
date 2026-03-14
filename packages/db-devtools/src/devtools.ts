@@ -72,6 +72,10 @@ export function unregisterCollection(id: string): void {
   if (typeof window === `undefined`) return
 
   const devtools = getDevtools()
+  if(!devtools){
+    console.warn(`Attempted to unregister collection with id ${id} from devtools, but devtools registry is not available.`)
+    return;
+  }
   devtools?.unregisterCollection(id)
 }
 
@@ -117,8 +121,13 @@ export function triggerTransactionUpdate(
   if (typeof window === `undefined`) return
 
   const devtools = getDevtools()
+  if (!devtools || !devtools.store) {
+    console.warn(`Attempted to trigger transaction update for collection with id ${collection.id}, but devtools registry is not available.`)
+    return;
+  }
+  
   // Delegate to store/registry through the public API
-  devtools?.store.updateTransactions(collection.id)
+  devtools.store.updateTransactions(collection.id)
 }
 
 /**

@@ -11,6 +11,9 @@ export default defineConfig({
       exclude: [`src/**/*.test.*`, `src/__tests__/**/*`],
     }),
   ],
+  resolve: {
+    dedupe: ['solid-js'],
+  },
   build: {
     target: `esnext`,
     lib: {

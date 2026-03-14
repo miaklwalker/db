@@ -74,12 +74,12 @@ export function CollectionDetailsPanel({
   createEffect(() => {
     const current = collection()
     if (!current || !current.instance) return
-    const unsubscribe = current.instance.subscribeChanges(() => {
+    const subscription = current.instance.subscribeChanges(() => {
       // Any change to the collection should retrigger the state view
       setStateVersion((v) => v + 1)
     })
     onCleanup(() => {
-      unsubscribe()
+      subscription.unsubscribe()
     })
   })
 
@@ -191,28 +191,28 @@ export function CollectionDetailsPanel({
                 return null
               })()}
 
-            <Explorer
+            {/* <Explorer
               label="Collection Metadata"
               value={() => metadata}
               defaultExpanded={{}}
-            />
+            /> */}
           </div>
         )
       }
 
       case `config`: {
-        return instance ? (
-          <Explorer
-            label="Collection Config"
-            value={() => {
-              // Filter out devtools internal properties
-              const config = { ...instance.config }
-              delete config.__devtoolsInternal
-              delete config.__devtoolsQueryIR
-              return config
-            }}
-            defaultExpanded={{}}
-          />
+        return instance ? (<div>Collection Config</div>
+          // <Explorer
+          //   label="Collection Config"
+          //   value={() => {
+          //     // Filter out devtools internal properties
+          //     const config = { ...instance.config }
+          //     delete config.__devtoolsInternal
+          //     delete config.__devtoolsQueryIR
+          //     return config
+          //   }}
+          //   defaultExpanded={{}}
+          // />
         ) : (
           <div class={styles().noDataMessage}>
             Collection instance not available
@@ -232,17 +232,17 @@ export function CollectionDetailsPanel({
         // Depend on stateVersion so updates re-render this block
         stateVersion()
         const stateData = {
-          syncedData: instance.syncedData,
-          optimisticUpserts: instance.optimisticUpserts,
-          optimisticDeletes: instance.optimisticDeletes,
+          syncedData: instance._state.syncedData,
+          optimisticUpserts: instance._state.optimisticUpserts,
+          optimisticDeletes: instance._state.optimisticDeletes,
         }
 
-        return (
-          <Explorer
-            label="Collection State"
-            value={() => stateData}
-            defaultExpanded={{}}
-          />
+        return ( <div>Collection State</div>
+          // <Explorer
+          //   label="Collection State"
+          //   value={() => stateData}
+          //   defaultExpanded={{}}
+          // />
         )
       }
 
@@ -279,10 +279,10 @@ export function CollectionDetailsPanel({
           )
         }
 
-        return (
-          <CollectionDataView
-            collectionMetadata={collectionInstance.metadata}
-          />
+        return (<div>Collection Data</div>
+          // <CollectionDataView
+          //   collectionMetadata={collectionInstance.metadata}
+          // />
         )
       }
 

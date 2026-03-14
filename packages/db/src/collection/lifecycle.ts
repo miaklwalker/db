@@ -287,6 +287,15 @@ export class CollectionLifecycleManager<
         }
       })
 
+      // Unregister from devtools before setting final status
+      if (
+      typeof window !== `undefined` &&
+      window.__TANSTACK_DB_DEVTOOLS__?.unregisterCollection
+    ) {
+      window.__TANSTACK_DB_DEVTOOLS__.unregisterCollection(this.collection.id)
+      this.collection.isRegisteredWithDevtools = false
+    }
+
       // Set status to cleaned-up after everything is cleaned up
       // This fires the status:change event to notify listeners
       this.setStatus(`cleaned-up`)

@@ -149,6 +149,7 @@ export function createDbDevtoolsRegistry(): DbDevtoolsRegistry {
 
 // Initialize the global registry if not already present
 export function initializeDevtoolsRegistry(): DbDevtoolsRegistry {
+  console.log(`Initializing DB Devtools Registry...`)
   // SSR safety check - return a no-op registry for server-side rendering
   if (typeof window === `undefined`) {
     // Create dummy signals that won't be used during SSR

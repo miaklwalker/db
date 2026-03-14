@@ -843,6 +843,12 @@ export class CollectionStateManager<
       return
     }
 
+    // Register transaction with devtools
+    if (typeof window !== `undefined`) {
+      const devtools = window.__TANSTACK_DB_DEVTOOLS__
+      devtools?.store?.registerTransaction?.(transaction, this.collection.id)
+    }
+
     // Schedule cleanup when the transaction completes
     transaction.isPersisted.promise
       .then(() => {

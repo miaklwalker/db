@@ -11,10 +11,11 @@ declare global {
       ) => (() => void) | undefined
       unregisterCollection: (id: string) => void
       registerTransaction?: (transaction: any, collectionId: string) => void
-      updateTransactions?: (collectionId?: string) => void
+      updateTransactions?: (collectionId?: string) => void | undefined
+      cleanup?: () => void | undefined
       // Core package may call this while devtools are initializing
       store: DevtoolsStore
-    }
+    } | undefined
 
     // Queue used before devtools initialize (read/written by core)
     __TANSTACK_DB_PENDING_TRANSACTIONS__?: Array<{

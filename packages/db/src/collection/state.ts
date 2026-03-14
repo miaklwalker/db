@@ -843,8 +843,8 @@ export class CollectionStateManager<
       return
     }
 
-    // Register transaction with devtools
-    if (typeof window !== `undefined`) {
+    // Register transaction with devtools but only if they not internal.
+    if (typeof window !== `undefined` && !this.config.__devtoolsInternal) {
       const devtools = window.__TANSTACK_DB_DEVTOOLS__
       devtools?.store?.registerTransaction?.(transaction, this.collection.id)
     }

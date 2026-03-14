@@ -4,25 +4,25 @@ import {
   createMemo,
   createSignal,
   onCleanup,
-} from "solid-js"
-import { useLiveQuery } from "@tanstack/solid-db"
+} from 'solid-js'
+import { useLiveQuery } from '@tanstack/solid-db'
 import {
   createCollection,
   createLiveQueryCollection,
   eq,
   localOnlyCollectionOptions,
-} from "@tanstack/db"
-import { clsx as cx } from "clsx"
-import { useStyles } from "../useStyles"
-import { getDevtoolsRegistry } from "../devtools"
-import { convertQueryIRToString } from "../utils/queryToString"
-import { Explorer } from "./Explorer"
-import { TransactionsPanel } from "./TransactionsPanel"
-import { GenericDetailsPanel } from "./DetailsPanel"
-import { SyntaxHighlighter } from "./SyntaxHighlighter"
+} from '@tanstack/db'
+import { clsx as cx } from 'clsx'
+import { useStyles } from '../useStyles'
+import { getDevtoolsRegistry } from '../devtools'
+import { convertQueryIRToString } from '../utils/queryToString'
+import { Explorer } from './Explorer'
+import { TransactionsPanel } from './TransactionsPanel'
+import { GenericDetailsPanel } from './DetailsPanel'
+import { SyntaxHighlighter } from './SyntaxHighlighter'
 import { CollectionDataView } from "./CollectionDataView"
-import type { CollectionMetadata } from "../types"
-import type { Accessor } from "solid-js"
+import type { CollectionMetadata } from '../types'
+import type { Accessor } from 'solid-js'
 
 export interface CollectionDetailsPanelProps {
   activeCollection: Accessor<CollectionMetadata | undefined>
@@ -132,10 +132,9 @@ export function CollectionDetailsPanel({
   })
 
   const collectionTransactions = createMemo(() => {
-    const raw = Array.isArray(transactionsForCollectionQuery.data)
+    return Array.isArray(transactionsForCollectionQuery.data)
       ? (transactionsForCollectionQuery.data as Array<any>).slice()
       : []
-    return raw
   })
 
   const activeTransaction = createMemo(() => {
@@ -191,28 +190,28 @@ export function CollectionDetailsPanel({
                 return null
               })()}
 
-            {/* <Explorer
+            <Explorer
               label="Collection Metadata"
               value={() => metadata}
               defaultExpanded={{}}
-            /> */}
+            />
           </div>
         )
       }
 
       case `config`: {
-        return instance ? (<div>Collection Config</div>
-          // <Explorer
-          //   label="Collection Config"
-          //   value={() => {
-          //     // Filter out devtools internal properties
-          //     const config = { ...instance.config }
-          //     delete config.__devtoolsInternal
-          //     delete config.__devtoolsQueryIR
-          //     return config
-          //   }}
-          //   defaultExpanded={{}}
-          // />
+        return instance ? (
+          <Explorer
+            label="Collection Config"
+            value={() => {
+              // Filter out devtools internal properties
+              const config = { ...instance.config }
+              delete config.__devtoolsInternal
+              delete config.__devtoolsQueryIR
+              return config
+            }}
+            defaultExpanded={{}}
+          />
         ) : (
           <div class={styles().noDataMessage}>
             Collection instance not available
@@ -236,13 +235,12 @@ export function CollectionDetailsPanel({
           optimisticUpserts: instance._state.optimisticUpserts,
           optimisticDeletes: instance._state.optimisticDeletes,
         }
-
-        return ( <div>Collection State</div>
-          // <Explorer
-          //   label="Collection State"
-          //   value={() => stateData}
-          //   defaultExpanded={{}}
-          // />
+        return (
+          <Explorer
+            label="Collection State"
+            value={() => stateData}
+            defaultExpanded={{}}
+          />
         )
       }
 
@@ -279,10 +277,10 @@ export function CollectionDetailsPanel({
           )
         }
 
-        return (<div>Collection Data</div>
-          // <CollectionDataView
-          //   collectionMetadata={collectionInstance.metadata}
-          // />
+        return (
+          <CollectionDataView
+            collectionMetadata={collectionInstance.metadata}
+          />
         )
       }
 

@@ -103,6 +103,23 @@ describe(`createLiveQueryCollection`, () => {
     expect(activeUsers2.size).toBe(2)
   })
 
+  it(`should expose query IR metadata for devtools`, () => {
+    const liveQuery = createLiveQueryCollection((q) =>
+      q
+        .from({ user: usersCollection })
+        .where(({ user }) => eq(user.active, true))
+        .select(({ user }) => ({ id: user.id, name: user.name })),
+    )
+
+    const queryIR = liveQuery.config.__devtoolsQueryIR
+
+    expect(queryIR).toBeDefined()
+    expect(queryIR?.unoptimized).toBeDefined()
+    expect(queryIR?.optimized).toBeDefined()
+    expect(queryIR?.unoptimized?.from?.type).toBe(`collectionRef`)
+    expect(queryIR?.optimized?.from?.type).toBe(`collectionRef`)
+  })
+
   describe(`compareOptions inheritance`, () => {
     it(`should inherit compareOptions from FROM collection`, () => {
       // Create a collection with non-default compareOptions

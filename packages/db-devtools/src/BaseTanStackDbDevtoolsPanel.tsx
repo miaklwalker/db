@@ -1,15 +1,15 @@
-import { clsx as cx } from "clsx"
-import { Show, createEffect, createMemo, createSignal } from "solid-js"
-import { useLiveQuery } from "@tanstack/solid-db"
+import { clsx as cx } from 'clsx'
+import { Show, createMemo, createSignal } from 'solid-js'
+import { useLiveQuery } from '@tanstack/solid-db'
 import {
   createCollection,
   createLiveQueryCollection,
   eq,
   localOnlyCollectionOptions,
-} from "@tanstack/db"
-import { useDevtoolsOnClose } from "./contexts"
-import { useStyles } from "./useStyles"
-import { useLocalStorage } from "./useLocalStorage"
+} from '@tanstack/db'
+import { useDevtoolsOnClose } from './contexts'
+import { useStyles } from './useStyles'
+import { useLocalStorage } from './useLocalStorage'
 import {
   CollectionDetailsPanel,
   CollectionsPanel,
@@ -17,9 +17,9 @@ import {
   Logo,
   TabNavigation,
   TransactionsPanel,
-} from "./components"
-import type { Accessor, JSX } from "solid-js"
-import type { DbDevtoolsRegistry } from "./types"
+} from './components'
+import type { Accessor, JSX } from 'solid-js'
+import type { DbDevtoolsRegistry } from './types'
 
 export interface BaseDbDevtoolsPanelOptions {
   /**
@@ -154,7 +154,7 @@ export const BaseTanStackDbDevtoolsPanel =
                 .from({ transactions: reg.store.transactions })
                 .orderBy(
                   ({ transactions }: any) => transactions.createdAt,
-                  `desc`
+                  `desc`,
                 )
                 .select(({ transactions }: any) => ({
                   id: transactions.id,
@@ -194,11 +194,11 @@ export const BaseTanStackDbDevtoolsPanel =
             q
               .from({ transactions: reg.store.transactions })
               .where(({ transactions }: any) =>
-                eq(transactions.collectionId, id)
+                eq(transactions.collectionId, id),
               )
               .orderBy(
                 ({ transactions }: any) => transactions.createdAt,
-                `desc`
+                `desc`,
               )
               .select(({ transactions }: any) => ({
                 id: transactions.id,
@@ -257,7 +257,7 @@ export const BaseTanStackDbDevtoolsPanel =
     const collectionsArray = createMemo(() =>
       Array.isArray(collectionsQuery.data)
         ? (collectionsQuery.data as Array<any>).slice()
-        : []
+        : [],
     )
     const transactions = createMemo(() => {
       const raw = Array.isArray(transactionsQuery.data)
@@ -303,14 +303,18 @@ export const BaseTanStackDbDevtoolsPanel =
       return data[0]
     })
 
-    // Use reactive data for immediate updates
-    createEffect(() => {
-      const newCollections = collectionsArray()
-      if (!Array.isArray(newCollections)) return
-      if (activeCollectionId() === `` && newCollections.length > 0) {
-        setActiveCollectionId(newCollections[0]?.id ?? ``)
-      }
-    })
+    // Commented this out because it prevented local at the global level for the transactions view.
+    // Transactions view shows the transactions for the active collection, defaulting to All transactions if no colleciotn is active.
+    // This prevented that behavior from being possible.
+    // MW
+    // // Use reactive data for immediate updates
+    // createEffect(() => {
+    // const newCollections = collectionsArray()
+    // if (!Array.isArray(newCollections)) return
+    // if (activeCollectionId() === `` && newCollections.length > 0) {
+    //   setActiveCollectionId(newCollections[0]?.id ?? ``)
+    // }
+    // })
 
     // Note: Transactions are handled reactively through useLiveQuery
 
@@ -319,7 +323,7 @@ export const BaseTanStackDbDevtoolsPanel =
         class={cx(
           styles().devtoolsPanel,
           `TanStackDbDevtoolsPanel`,
-          className ? className() : ``
+          className ? className() : ``,
         )}
         style={style ? style() : ``}
         {...otherPanelProps}
@@ -381,7 +385,13 @@ export const BaseTanStackDbDevtoolsPanel =
                 <CollectionsPanel
                   collections={collectionsArray as any}
                   activeCollectionId={activeCollectionId}
-                  onSelectCollection={(c) => setActiveCollectionId(c.id)}
+                  onSelectCollection={(c) => {
+                    if (activeCollectionId() === c.id) {
+                      setActiveCollectionId(``)
+                    } else {
+                      setActiveCollectionId(c.id)
+                    }
+                  }}
                 />
               </Show>
 
@@ -395,7 +405,7 @@ export const BaseTanStackDbDevtoolsPanel =
                     } catch (error) {
                       console.error(
                         `Error getting transactions for panel:`,
-                        error
+                        error,
                       )
                       return []
                     }

@@ -6,6 +6,9 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  optimizeDeps: {
+    exclude: ['@tanstack/store']
+  },
   plugins: [
     viteTsConfigPaths({
       projects: [`./tsconfig.json`],

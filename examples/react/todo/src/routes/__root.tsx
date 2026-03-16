@@ -12,6 +12,7 @@ import { TanStackReactDbDevtoolsPanel } from "@tanstack/react-db-devtools"
 import appCss from "../styles.css?url"
 
 export const Route = createRootRoute({
+  shellComponent: RootDocument,
   head: () => ({
     meta: [
       {
@@ -34,7 +35,7 @@ export const Route = createRootRoute({
   }),
 
   component: () => (
-    <RootDocument>
+    <>
       <Outlet />
       <TanstackDevtools
         plugins={[
@@ -50,7 +51,7 @@ export const Route = createRootRoute({
       />
       {/* Alternative standalone component */}
       {/* <TanStackReactDbDevtools position="bottom-right" /> */}
-    </RootDocument>
+    </>
   ),
 })
 

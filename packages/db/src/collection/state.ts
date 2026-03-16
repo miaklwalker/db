@@ -843,8 +843,9 @@ export class CollectionStateManager<
       return
     }
 
-    // Register transaction with devtools but only if they not internal.
-    if (typeof window !== `undefined` && !this.config.__devtoolsInternal) {
+    // Register transaction with devtools for user collections only.
+    // Devtools internal collections would recurse if they register their own transactions.
+    if (typeof window !== `undefined` && !this.collection.config.__devtoolsInternal) {
       const devtools = window.__TANSTACK_DB_DEVTOOLS__
       devtools?.store?.registerTransaction?.(transaction, this.collection.id)
     }

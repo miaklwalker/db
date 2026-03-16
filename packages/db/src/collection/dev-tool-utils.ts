@@ -12,7 +12,6 @@ declare global {
       updateTransactions?: (collectionId?: string) => void
       store?: {
         registerTransaction?: (transaction: any, collectionId: string) => void
-        updateTransactions?: (collectionId?: string) => void
       }
     }
 

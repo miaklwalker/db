@@ -137,6 +137,7 @@ export class CollectionConfigBuilder<
   private graphCache: D2 | undefined
   private inputsCache: Record<string, RootStreamBuilder<unknown>> | undefined
   private pipelineCache: ResultStream | undefined
+  private optimizedQueryIRCache: QueryIR | undefined
   public sourceWhereClausesCache:
     | Map<string, BasicExpression<boolean>>
     | undefined
@@ -237,6 +238,10 @@ export class CollectionConfigBuilder<
       },
       collectionType: `live-query` as const,
       __devtoolsInternal: this.config.__devtoolsInternal,
+      __devtoolsQueryIR: {
+        unoptimized: this.query,
+        optimized: this.optimizedQueryIRCache,
+      },
     }
   }
 
@@ -682,6 +687,7 @@ export class CollectionConfigBuilder<
     this.pipelineCache = compilation.pipeline
     this.sourceWhereClausesCache = compilation.sourceWhereClauses
     this.compiledAliasToCollectionId = compilation.aliasToCollectionId
+    this.optimizedQueryIRCache = compilation.optimizedQueryIR
 
     // Defensive check: verify all compiled aliases have corresponding inputs
     // This should never happen since all aliases come from user declarations,

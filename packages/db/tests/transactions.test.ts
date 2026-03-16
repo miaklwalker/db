@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createTransaction } from '../src/transactions'
 import { createCollection } from '../src/collection/index.js'
 import {
@@ -9,6 +9,100 @@ import {
 } from '../src/errors'
 
 describe(`Transactions`, () => {
+  it(`notifies devtools when a direct-operation transaction completes`, async () => {
+    const originalWindow = globalThis.window
+    const registerTransaction = vi.fn()
+    const updateTransactions = vi.fn()
+
+    Object.defineProperty(globalThis, `window`, {
+      configurable: true,
+      value: {
+        __TANSTACK_DB_DEVTOOLS__: {
+          store: {
+            registerTransaction,
+          },
+          updateTransactions,
+        },
+      },
+    })
+
+    try {
+      const collection = createCollection<{ id: number; value: string }>({
+        id: `devtools-direct-transaction`,
+        getKey: (item) => item.id,
+        sync: {
+          sync: () => {},
+        },
+        onInsert: async () => ({}),
+      })
+
+      const transaction = collection.insert({ id: 1, value: `first` })
+
+      await transaction.isPersisted.promise
+
+      expect(registerTransaction).toHaveBeenCalledWith(
+        transaction,
+        collection.id,
+      )
+      expect(updateTransactions).toHaveBeenCalledWith(collection.id)
+    } finally {
+      Object.defineProperty(globalThis, `window`, {
+        configurable: true,
+        value: originalWindow,
+      })
+    }
+  })
+
+  it(`notifies devtools when a manual transaction completes`, async () => {
+    const originalWindow = globalThis.window
+    const registerTransaction = vi.fn()
+    const updateTransactions = vi.fn()
+
+    Object.defineProperty(globalThis, `window`, {
+      configurable: true,
+      value: {
+        __TANSTACK_DB_DEVTOOLS__: {
+          store: {
+            registerTransaction,
+          },
+          updateTransactions,
+        },
+      },
+    })
+
+    try {
+      const collection = createCollection<{ id: number; value: string }>({
+        id: `devtools-manual-transaction`,
+        getKey: (item) => item.id,
+        sync: {
+          sync: () => {},
+        },
+      })
+
+      const transaction = createTransaction<{ id: number; value: string }>({
+        autoCommit: false,
+        mutationFn: async () => Promise.resolve(),
+      })
+
+      transaction.mutate(() => {
+        collection.insert({ id: 1, value: `manual` })
+      })
+
+      await transaction.commit()
+
+      expect(registerTransaction).toHaveBeenCalledWith(
+        transaction,
+        collection.id,
+      )
+      expect(updateTransactions).toHaveBeenCalledWith(collection.id)
+    } finally {
+      Object.defineProperty(globalThis, `window`, {
+        configurable: true,
+        value: originalWindow,
+      })
+    }
+  })
+
   it(`calling createTransaction creates a transaction`, () => {
     const transaction = createTransaction({
       mutationFn: async () => Promise.resolve(),

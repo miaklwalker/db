@@ -64,6 +64,14 @@ export function triggerDevtoolsUpdate(
   }
 }
 
+export function triggerDevtoolsTransactionUpdate(
+  collection: CollectionImpl<any, any, any>,
+): void {
+  if (typeof window !== `undefined`) {
+    window.__TANSTACK_DB_DEVTOOLS__?.updateTransactions?.(collection.id)
+  }
+}
+
 export interface PendingSyncedTransaction<
   T extends object = Record<string, unknown>,
 > {

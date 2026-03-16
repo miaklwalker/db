@@ -1,6 +1,9 @@
 import { deepEquals } from '../utils'
 import { SortedMap } from '../SortedMap'
-import { triggerDevtoolsUpdate } from './dev-tool-utils'
+import {
+  triggerDevtoolsTransactionUpdate,
+  triggerDevtoolsUpdate,
+} from './dev-tool-utils'
 import type {CollectionImpl} from './index.js';
 import type { Transaction } from '../transactions'
 import type { StandardSchemaV1 } from '@standard-schema/spec'
@@ -911,6 +914,7 @@ export class CollectionStateManager<
     this.recomputeOptimisticState(false)
 
     triggerDevtoolsUpdate(this.collection)
+    triggerDevtoolsTransactionUpdate(this.collection)
   }
 
   /**

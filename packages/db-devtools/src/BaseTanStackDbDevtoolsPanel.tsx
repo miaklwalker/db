@@ -52,6 +52,22 @@ export interface BaseDbDevtoolsPanelOptions {
   shadowDOMTarget?: ShadowRoot
 }
 
+// Moving Variable Declarations for Live Queries to the module level to ensure they are shared across component instances and not re-created on each render. 
+let collectionsQuery: any
+let transactionsQuery: any
+let collectionsLQ: any
+let transactionsLQ: any
+// Note: selectedCollectionLQ is currently unused, kept for potential future detail views
+// Commented OUT
+// We are not filtering the transaction tab to only show the selected collections transactions.
+// let transactionsForCollectionLQ: any
+let selectedTransactionLQ: any
+// Local-only empty placeholders for early-render fallbacks
+// Commenting OUT
+// Unused empty collection query is left here for potential future use if we want to implement collection-specific transaction filtering again.
+// let emptyCollectionsCol: any
+
+let emptyTransactionsCol: any
 export const BaseTanStackDbDevtoolsPanel =
   function BaseTanStackDbDevtoolsPanel({
     ...props
@@ -79,20 +95,7 @@ export const BaseTanStackDbDevtoolsPanel =
 
     // Use useLiveQuery for reactive data from devtools collections
     // Wrap in try-catch to prevent crashes if collections are not properly initialized
-    let collectionsQuery: any
-    let transactionsQuery: any
-    let collectionsLQ: any
-    let transactionsLQ: any
-    // Note: selectedCollectionLQ is currently unused, kept for potential future detail views
-    // Commented OUT
-    // We are not filtering the transaction tab to only show the selected collections transactions.
-    // let transactionsForCollectionLQ: any
-    let selectedTransactionLQ: any
-    // Local-only empty placeholders for early-render fallbacks
-    // Commenting OUT
-    // Unused empty collection query is left here for potential future use if we want to implement collection-specific transaction filtering again.
-    // let emptyCollectionsCol: any
-    let emptyTransactionsCol: any
+
 
     try {
       // Ensure empty placeholder collections exist for any fallback paths
